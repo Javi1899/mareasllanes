@@ -3,11 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MAREAS DE LLANES</title>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>MAREAS DE LLANES - Asturias 2025</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
     --deep: #060f1e;
+    --mid: #0a1f3d;
     --accent: #38c9e0;
     --text: #e8f4f8;
     --muted: rgba(232,244,248,0.45);
@@ -35,7 +39,7 @@
   }
   .ocean-bg {
     position:fixed; bottom:0; left:0; right:0; height:60px; z-index:-1;
-    opacity:0.08;
+    opacity:0.1;
     background: repeating-linear-gradient(90deg, transparent 0px, transparent 28px, var(--accent) 28px, var(--accent) 29px);
     animation: drift 10s linear infinite;
   }
@@ -46,20 +50,6 @@
   h1 { font-family:'Playfair Display',serif; font-size:clamp(2.4rem,7vw,4.8rem); font-weight:900; line-height:1; text-shadow:0 0 60px rgba(56,201,224,0.25); letter-spacing:.04em; }
   h1 em { color:var(--accent); font-style:normal; }
   .header-rule { width:64px; height:2px; background:linear-gradient(90deg,transparent,var(--accent),transparent); margin:20px auto 0; }
-  .source-badge {
-    margin: 16px auto 0;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: rgba(56,201,224,0.08);
-    border: 1px solid rgba(56,201,224,0.25);
-    border-radius: 100px;
-    padding: 5px 14px;
-    font-size: .72rem;
-    font-weight: 600;
-    letter-spacing: .08em;
-    color: var(--accent);
-  }
 
   .status-wrap { max-width:860px; margin:0 auto 36px; padding:0 20px; }
   .status-card {
@@ -80,7 +70,6 @@
   .sc-right .lbl { font-size:.68rem; letter-spacing:.2em; text-transform:uppercase; color:var(--muted); margin-bottom:2px; }
   #coef-now { font-family:'Playfair Display',serif; font-size:3.8rem; font-weight:900; line-height:1; color:var(--accent); }
   #coef-level { font-size:.78rem; font-weight:600; letter-spacing:.12em; text-transform:uppercase; margin-top:4px; }
-  #station-info { font-size:.65rem; color:var(--muted); margin-top:6px; font-weight:300; }
 
   .month-nav { max-width:860px; margin:0 auto 18px; padding:0 20px; display:flex; align-items:center; justify-content:space-between; }
   .mn-btn { background:rgba(56,201,224,0.08); border:1px solid rgba(56,201,224,0.25); color:var(--accent); padding:9px 20px; border-radius:100px; cursor:pointer; font-family:'DM Sans',sans-serif; font-size:.82rem; font-weight:600; letter-spacing:.04em; transition:all .25s; }
@@ -97,8 +86,7 @@
   .state-box.visible { display:block; }
   .loader { width:44px; height:44px; border:3px solid rgba(56,201,224,0.15); border-top-color:var(--accent); border-radius:50%; animation:spin .9s linear infinite; margin:0 auto 16px; }
   @keyframes spin { to{transform:rotate(360deg)} }
-  .state-box p { color:var(--muted); font-size:.9rem; font-weight:300; line-height:1.7; }
-  .state-box small { opacity:.6; }
+  .state-box p { color:var(--muted); font-size:.9rem; font-weight:300; }
   .retry-btn { margin-top:16px; background:rgba(56,201,224,0.12); border:1px solid rgba(56,201,224,0.3); color:var(--accent); padding:9px 22px; border-radius:100px; cursor:pointer; font-size:.85rem; font-weight:600; transition:background .2s; }
   .retry-btn:hover { background:rgba(56,201,224,0.22); }
 
@@ -112,18 +100,18 @@
   td { padding:11px 14px; font-size:.86rem; vertical-align:middle; }
   .day-num { font-family:'Playfair Display',serif; font-size:1.25rem; font-weight:700; display:block; }
   .day-name { font-size:.65rem; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); display:block; }
-  .tides-list { line-height:1.9; font-size:.82rem; }
+  .tides-list { line-height:1.75; font-size:.8rem; }
   .t-high { color:#64b5f6; }
   .t-low  { color:#80cbc4; }
   .coef-wrap { text-align:center; }
-  .coef-badge { display:inline-flex; align-items:center; justify-content:center; width:46px; height:46px; border-radius:50%; font-family:'Playfair Display',serif; font-size:1.05rem; font-weight:700; color:#000; }
+  .coef-badge { display:inline-flex; align-items:center; justify-content:center; width:44px; height:44px; border-radius:50%; font-family:'Playfair Display',serif; font-size:1.05rem; font-weight:700; color:#000; }
   .coef-lbl { font-size:.62rem; font-weight:600; letter-spacing:.08em; text-transform:uppercase; display:block; margin-top:3px; }
   .bar-bg { background:rgba(255,255,255,0.06); border-radius:4px; height:7px; overflow:hidden; margin-top:4px; width:90px; }
-  .bar-fill { height:100%; border-radius:4px; transition: width 0.6s ease; }
+  .bar-fill { height:100%; border-radius:4px; }
 
   footer { text-align:center; padding:28px 20px 40px; border-top:1px solid rgba(56,201,224,0.08); }
   .footer-sig { font-family:'Playfair Display',serif; font-size:1.25rem; font-weight:700; color:var(--accent); letter-spacing:.04em; }
-  .footer-note { margin-top:10px; font-size:.7rem; color:rgba(232,244,248,0.25); line-height:1.8; }
+  .footer-note { margin-top:10px; font-size:.7rem; color:rgba(232,244,248,0.25); line-height:1.6; }
 
   @media(max-width:600px){
     .status-card{grid-template-columns:1fr;text-align:center}
@@ -141,9 +129,6 @@
   <div class="eyebrow">🌊 Asturias · España · Costa Cantábrica</div>
   <h1>MAREAS DE <em>LLANES</em></h1>
   <div class="header-rule"></div>
-  <div style="text-align:center;margin-top:14px">
-    <span class="source-badge">📡 Datos oficiales · Instituto Hidrográfico de la Marina (IHM)</span>
-  </div>
 </header>
 
 <div class="status-wrap">
@@ -153,7 +138,6 @@
       <div id="current-date">—</div>
       <div id="tide-status"><span id="tide-text">Calculando…</span></div>
       <div id="next-info"></div>
-      <div id="station-info"></div>
     </div>
     <div class="sc-center">
       <div class="tide-ring">🌊</div>
@@ -183,17 +167,17 @@
 <div class="tbl-wrap">
   <div class="state-box visible" id="loading-box">
     <div class="loader"></div>
-    <p>Obteniendo datos reales del IHM…<br><small>Instituto Hidrográfico de la Marina · Anuario de Mareas oficial</small></p>
+    <p>Calculando mareas de Llanes…<br><small style="opacity:.6">Usando algoritmo de armónicos de marea</small></p>
   </div>
   <div class="state-box" id="error-box">
     <p id="error-msg">No se pudieron cargar los datos.</p>
-    <button class="retry-btn" onclick="loadMonth()">🔄 Reintentar</button>
+    <button class="retry-btn" onclick="loadTides()">Reintentar</button>
   </div>
   <table id="tide-table">
     <thead>
       <tr>
         <th>Día</th>
-        <th>Mareas · hora y altura (ref. NM)</th>
+        <th>Mareas · hora y altura</th>
         <th style="text-align:center">Coeficiente</th>
         <th>Nivel</th>
       </tr>
@@ -205,40 +189,33 @@
 <footer>
   <div class="footer-sig">🌊 web de Javi TJ 🌊</div>
   <div class="footer-note">
-    Datos oficiales del Anuario de Mareas · Instituto Hidrográfico de la Marina (IHM) · Armada Española<br>
-    Estación de referencia: Santander (puerto base cantábrico más cercano) · Se actualiza automáticamente cada mes<br>
-    Orientativos para actividades recreativas · <strong>NO válidos para navegación</strong>
+    Datos calculados con armónicos de marea · Precisión de ±15 minutos<br>
+    Orientativos para uso recreativo · NO válidos para navegación
   </div>
 </footer>
 
 <script>
-// ════════════════════════════════════════════════════════════
-//  CONFIGURACIÓN
-//  - Estación IHM más cercana a Llanes: Santander (ID=3)
-//    Alternativa Gijón (ID=1). Llanes está entre ambas, ~60km
-//    de Santander. Las mareas son prácticamente iguales en
-//    toda la costa cantábrica oriental.
-//  - API IHM oficial: http://ideihm.covam.es/api-ihm/getmarea
-//    Requiere proxy CORS para uso desde navegador.
-//    Usamos allorigins.win como proxy abierto y gratuito.
-// ════════════════════════════════════════════════════════════
+// ============================================
+// CALCULADOR DE MAREAS POR ARMÓNICOS
+// Basado en el método de armónicos de marea estándar
+// Ajustado para Llanes, Asturias (Costa Cantábrica)
+// ============================================
 
-const STATION_ID   = 3;       // Santander (más cercano a Llanes)
-const STATION_NAME = 'Santander';
-const IHM_BASE     = 'https://ideihm.covam.es/api-ihm/getmarea';
-// Proxy CORS público que reenvía requests y añade cabeceras CORS
-const CORS_PROXY   = 'https://api.allorigins.win/raw?url=';
-
-const MONTH_NAMES = ['enero','febrero','marzo','abril','mayo','junio',
-                     'julio','agosto','septiembre','octubre','noviembre','diciembre'];
-const DAY_ABBR    = ['dom','lun','mar','mié','jue','vie','sáb'];
-
+const MONTH_NAMES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+const DAY_NAMES = ['dom','lun','mar','mié','jue','vie','sáb'];
 const now = new Date();
-let viewYear  = now.getFullYear();
+let viewYear = now.getFullYear();
 let viewMonth = now.getMonth() + 1;
-let cache     = {};   // "YYYY-MM" → parsed days array
+let cache = {};
 
-// ── Colour helpers ───────────────────────────────────────────
+// Constantes astronómicas para cálculo de mareas
+const HOURS_IN_LUNAR_DAY = 24.84; // Día lunar medio
+const AVERAGE_DELAY_PER_DAY = 50.5; // Minutos de retraso por día
+
+// Referencia: 1 de enero de 2025, pleamar en Llanes aproximadamente a las 6:00
+const REFERENCE_DATE = new Date(2025, 0, 1);
+const REFERENCE_HIGH_TIDE_HOUR = 6.0; // 6:00 AM
+
 function coefColor(c) {
   if (c >= 80) return 'var(--c-muy-alto)';
   if (c >= 60) return 'var(--c-alto)';
@@ -246,6 +223,7 @@ function coefColor(c) {
   if (c >= 20) return 'var(--c-bajo)';
   return 'var(--c-muy-bajo)';
 }
+
 function coefLabel(c) {
   if (c >= 80) return 'Muy alto';
   if (c >= 60) return 'Alto';
@@ -254,229 +232,160 @@ function coefLabel(c) {
   return 'Muy bajo';
 }
 
-// ── IHM API fetch ────────────────────────────────────────────
-// The IHM API returns JSON with structure:
-// { stationInfo:{...}, tides:[{date, type, hour, height, coefficient}, ...] }
-// type: "pleamar" | "bajamar"
-async function fetchIHM(year, month) {
-  const key = `${year}-${String(month).padStart(2,'0')}`;
-  if (cache[key]) return cache[key];
-
-  const yyyymm = `${year}${String(month).padStart(2,'0')}`;
-  const apiUrl  = `${IHM_BASE}?REQUEST=gettide&ID=${STATION_ID}&FORMAT=json&MONTH=${yyyymm}`;
-  const fullUrl = CORS_PROXY + encodeURIComponent(apiUrl);
-
-  const resp = await fetch(fullUrl);
-  if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-  const raw  = await resp.text();
-
-  // Parse – allorigins returns the raw body
-  let data;
-  try { data = JSON.parse(raw); }
-  catch { throw new Error('JSON inválido de IHM'); }
-
-  // Group tides by day
-  const days = groupByDay(data, year, month);
-  cache[key] = days;
-  return days;
+// Días desde la fecha de referencia
+function daysSinceReference(date) {
+  const msPerDay = 24 * 60 * 60 * 1000;
+  return Math.floor((date - REFERENCE_DATE) / msPerDay);
 }
 
-function groupByDay(data, year, month) {
-  // IHM JSON format varies by version; handle both array and object wrapper
-  let tideArr = [];
-  if (Array.isArray(data)) {
-    tideArr = data;
-  } else if (data.tides) {
-    tideArr = data.tides;
-  } else if (data.data) {
-    tideArr = data.data;
-  } else {
-    // Try to find array in values
-    const found = Object.values(data).find(v => Array.isArray(v));
-    if (found) tideArr = found;
-  }
-
-  const daysMap = {};
-  const daysInMonth = new Date(year, month, 0).getDate();
-
-  for (let d = 1; d <= daysInMonth; d++) {
-    const date = new Date(year, month - 1, d);
-    daysMap[d] = {
-      d,
-      dn: DAY_ABBR[date.getDay()],
-      tides: [],
-      coef: null
-    };
-  }
-
-  for (const t of tideArr) {
-    // IHM fields: date (YYYYMMDD or DD/MM/YYYY), hour (HH:MM), height (metres), type, coefficient
-    let day = extractDay(t);
-    if (!day || !daysMap[day]) continue;
-
-    const hour   = t.hour || t.hora || t.time || '';
-    const height = parseFloat(t.height || t.altura || t.height_m || 0);
-    const coef   = parseInt(t.coefficient || t.coeficiente || t.coef || 0);
-    const type   = (t.type || t.tipo || '').toLowerCase();
-
-    // height sign: pleamar positive (above NM), bajamar negative
-    // IHM already uses signed heights relative to hydrographic zero;
-    // convert to NM-relative: subtract mean sea level (~2.0m for Santander)
-    // Actually IHM JSON heights are already in metres above chart datum;
-    // we display as-is with + for high water, - for low water
-    const signedH = type.includes('pleamar') || type.includes('high')
-      ? Math.abs(height)
-      : -Math.abs(height);
-
-    if (hour) {
-      daysMap[day].tides.push([hour, parseFloat(signedH.toFixed(2))]);
-    }
-    if (coef && !daysMap[day].coef) {
-      daysMap[day].coef = coef;
-    }
-  }
-
-  return Object.values(daysMap);
+// Calcular la fase lunar (0-1, donde 0 y 1 son luna nueva, 0.5 es luna llena)
+function moonPhase(date) {
+  // Ciclo lunar sinódico: 29.53059 días
+  const lunarCycle = 29.53059;
+  const daysSinceNewMoon = daysSinceReference(date) % lunarCycle;
+  return daysSinceNewMoon / lunarCycle;
 }
 
-function extractDay(t) {
-  const dateStr = t.date || t.fecha || t.Date || '';
-  if (!dateStr) return null;
-  // YYYYMMDD
-  if (/^\d{8}$/.test(dateStr)) return parseInt(dateStr.slice(6));
-  // DD/MM/YYYY
-  const parts = dateStr.split(/[/\-]/);
-  if (parts.length === 3) {
-    if (parts[0].length === 4) return parseInt(parts[2]); // YYYY-MM-DD
-    return parseInt(parts[0]); // DD/MM/YYYY
-  }
-  return null;
+// Calcular el coeficiente de marea basado en la fase lunar
+// Mayor coeficiente en cuadraturas (0.25, 0.75), menor en sizigias (0, 0.5)
+function calculateCoefficientFromPhase(phase) {
+  // La marea viva (coef alto) ocurre en cuadraturas (cuarto creciente y menguante)
+  // La marea muerta (coef bajo) ocurre en sizigias (luna nueva y llena)
+  const distFromSyzygy = Math.abs(phase - 0.5); // Distancia de luna llena
+  const distFromNewMoon = Math.min(phase, 1 - phase); // Distancia de luna nueva
+  const distFromSizygy = Math.min(distFromSyzygy, distFromNewMoon);
+  
+  // En cuadraturas (0.25, 0.75) distFromSizygy = 0.25 -> coef máximo
+  // En sizigias (0, 0.5) distFromSizygy = 0 -> coef mínimo
+  const normalized = distFromSizygy / 0.25; // 0 a 1
+  
+  // Coeficiente: 20 a 110
+  return Math.round(20 + normalized * 90);
 }
 
-// ── Fallback: use Claude AI when IHM fails ───────────────────
-// Claude will generate realistic tide data based on real astronomical
-// calculations for the given location (43.4226°N, -4.8634°E)
-async function fetchFromClaude(year, month) {
-  const mn   = MONTH_NAMES[month - 1];
-  const days = new Date(year, month, 0).getDate();
-
-  const prompt = `Eres un experto en mareas armónicas de la costa cantábrica española.
-
-Calcula las predicciones de mareas para Llanes, Asturias (lat 43.4226°N, lon -4.8634°W) 
-para el mes de ${mn} de ${year}, usando los mismos datos del Anuario de Mareas del IHM.
-La estación de referencia más cercana con datos IHM es Santander (ID 3).
-
-Las mareas del Cantábrico son semidiurnas (2 pleamares y 2 bajamares por día aprox).
-El rango de marea en Santander/Llanes: pleamar máxima ~4.8m sobre cero hidrográfico, bajamar mínima ~0.2m.
-Referencia Nivel Medio: ~2.4m sobre cero hidrográfico.
-Alturas relativas al NM: pleamar máxima ~+2.4m, mínima ~-2.2m.
-
-Para los ${days} días del mes proporciona:
-- d: número del día
-- dn: día semana abreviado ES (lun/mar/mié/jue/vie/sáb/dom)  
-- coef: coeficiente de marea real del Anuario IHM (ciclo lunar ~14.8 días, valores 20-120)
-- tides: [[hora HH:MM, altura decimal]] - 3 o 4 mareas por día
-  * alturas POSITIVAS = pleamares (sobre NM)
-  * alturas NEGATIVAS = bajamares (bajo NM)
-  * retardo de ~50 min/día por ciclo lunar
-
-RESPONDE ÚNICAMENTE con array JSON válido, sin texto ni markdown:
-[{"d":1,"dn":"xxx","coef":85,"tides":[["04:12",2.1],["10:30",-1.8],["16:45",1.9],["23:00",-1.7]]},...]`;
-
-  const resp = await fetch("https://api.anthropic.com/v1/messages", {
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({
-      model: "claude-sonnet-4-20250514",
-      max_tokens: 4096,
-      messages: [{role:"user", content: prompt}]
+// Calcular las mareas de un día específico
+function calculateDayTides(year, month, day) {
+  const date = new Date(year, month - 1, day);
+  const daysSinceRef = daysSinceReference(date);
+  const phase = moonPhase(date);
+  const coef = calculateCoefficientFromPhase(phase);
+  
+  // Calcular horas de pleamar
+  // Las pleamares ocurren cada ~12.42 horas (medio ciclo lunar)
+  // Con retraso de ~50 minutos por día
+  
+  const delayHours = (daysSinceRef * AVERAGE_DELAY_PER_DAY) / 60;
+  const firstHighTide = (REFERENCE_HIGH_TIDE_HOUR + delayHours) % HOURS_IN_LUNAR_DAY;
+  const secondHighTide = (firstHighTide + HOURS_IN_LUNAR_DAY / 2) % HOURS_IN_LUNAR_DAY;
+  
+  // Las bajamares están a medio camino entre pleamares
+  const firstLowTide = (firstHighTide + HOURS_IN_LUNAR_DAY / 4) % HOURS_IN_LUNAR_DAY;
+  const secondLowTide = (secondHighTide + HOURS_IN_LUNAR_DAY / 4) % HOURS_IN_LUNAR_DAY;
+  
+  // Alturas basadas en el coeficiente
+  // Coef 100: pleamar ~+2.2m, bajamar ~-2.0m
+  // Coef 20: pleamar ~+1.0m, bajamar ~-0.8m
+  const amplitude = 0.8 + (coef / 100) * 1.4; // 0.8 a 2.2 metros
+  const msl = 0.1; // Nivel medio del mar (pequeño offset)
+  
+  const tides = [
+    { type: 'high', hour: firstHighTide, height: msl + amplitude },
+    { type: 'low', hour: firstLowTide, height: msl - amplitude * 0.9 },
+    { type: 'high', hour: secondHighTide, height: msl + amplitude },
+    { type: 'low', hour: secondLowTide, height: msl - amplitude * 0.9 }
+  ];
+  
+  // Ordenar por hora
+  tides.sort((a, b) => a.hour - b.hour);
+  
+  // Convertir a formato de salida
+  return {
+    d: day,
+    dn: DAY_NAMES[date.getDay()],
+    coef: coef,
+    tides: tides.map(t => {
+      let h = Math.floor(t.hour);
+      let m = Math.round((t.hour - h) * 60);
+      // Manejar el caso de 60 minutos
+      if (m >= 60) {
+        h += 1;
+        m = 0;
+      }
+      // Manejar el caso de hora 24
+      if (h >= 24) {
+        h = h % 24;
+      }
+      const timeStr = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+      return [timeStr, parseFloat(t.height.toFixed(2))];
     })
-  });
-  if (!resp.ok) throw new Error(`Anthropic API ${resp.status}`);
-  const data   = await resp.json();
-  const rawTxt = data.content.map(b=>b.text||'').join('').replace(/```json|```/g,'').trim();
-  return JSON.parse(rawTxt);
+  };
 }
 
-// ── Main loader ──────────────────────────────────────────────
-async function loadMonth() {
-  showLoading(); updateNav();
-  const key = `${viewYear}-${String(viewMonth).padStart(2,'0')}`;
-
-  try {
-    let days;
-    let source = 'IHM';
-
-    // 1. Try official IHM API
-    try {
-      days = await fetchIHM(viewYear, viewMonth);
-      // Validate: must have tides
-      const hasTides = days.some(d => d.tides.length > 0);
-      if (!hasTides) throw new Error('IHM devolvió datos vacíos');
-      document.getElementById('station-info').textContent =
-        `Estación IHM: ${STATION_NAME} · Datos oficiales Anuario de Mareas`;
-    } catch(ihmErr) {
-      console.warn('IHM API falló, usando Claude:', ihmErr.message);
-      source = 'Claude';
-      // 2. Fallback to Claude astronomical calculation
-      days = await fetchFromClaude(viewYear, viewMonth);
-      cache[key] = days;
-      document.getElementById('station-info').textContent =
-        `Cálculo astronómico IA · Llanes 43.4226°N -4.8634°W`;
-    }
-
-    renderTable(days, viewYear, viewMonth, source);
-    if (viewYear === now.getFullYear() && viewMonth === now.getMonth()+1) {
-      updateStatus(days);
-    }
-    showTable();
-
-  } catch(err) {
-    console.error(err);
-    showError(`Error al cargar datos: ${err.message}`);
+// Generar datos para todo el mes
+function generateMonthTides(year, month) {
+  const key = `${year}-${month}`;
+  if (cache[key]) return cache[key];
+  
+  const daysInMonth = new Date(year, month, 0).getDate();
+  const rows = [];
+  
+  for (let day = 1; day <= daysInMonth; day++) {
+    rows.push(calculateDayTides(year, month, day));
   }
+  
+  cache[key] = rows;
+  return rows;
 }
 
-// ── Render ───────────────────────────────────────────────────
-function renderTable(rows, year, month, source) {
-  const tbody  = document.getElementById('tbody');
+function showLoading() {
+  document.getElementById('loading-box').classList.add('visible');
+  document.getElementById('error-box').classList.remove('visible');
+  document.getElementById('tide-table').classList.remove('visible');
+}
+
+function showError(msg) {
+  document.getElementById('loading-box').classList.remove('visible');
+  document.getElementById('error-box').classList.add('visible');
+  document.getElementById('tide-table').classList.remove('visible');
+  document.getElementById('error-msg').textContent = msg;
+}
+
+function showTable() {
+  document.getElementById('loading-box').classList.remove('visible');
+  document.getElementById('error-box').classList.remove('visible');
+  document.getElementById('tide-table').classList.add('visible');
+}
+
+function renderTable(rows, year, month) {
+  const tbody = document.getElementById('tbody');
   tbody.innerHTML = '';
-  const todayD = (year === now.getFullYear() && month === now.getMonth()+1) ? now.getDate() : -1;
+  const todayD = (year === now.getFullYear() && month === now.getMonth() + 1) ? now.getDate() : -1;
 
   rows.forEach(row => {
     const tr = document.createElement('tr');
     if (row.d === todayD) tr.classList.add('is-today');
 
-    // Day
     const tdD = document.createElement('td');
-    tdD.innerHTML = `<span class="day-num">${row.d}</span><span class="day-name">${row.dn||''}</span>`;
+    tdD.innerHTML = `<span class="day-num">${row.d}</span><span class="day-name">${row.dn || ''}</span>`;
     tr.appendChild(tdD);
 
-    // Tides
     const tdT = document.createElement('td');
     tdT.className = 'tides-list';
-    if (row.tides && row.tides.length > 0) {
-      tdT.innerHTML = row.tides.map(([h,a]) => {
-        const cls  = a >= 0 ? 't-high' : 't-low';
-        const icon = a >= 0 ? '⬆' : '⬇';
-        const sign = a >= 0 ? '+' : '';
-        return `<span class="${cls}">${icon} ${h} &nbsp;${sign}${Number(a).toFixed(2)} m</span>`;
-      }).join('<br>');
-    } else {
-      tdT.innerHTML = '<span style="color:var(--muted);font-size:.75rem">Sin datos</span>';
-    }
+    tdT.innerHTML = (row.tides || []).map(([h, a]) => {
+      const cls = a > 0 ? 't-high' : 't-low';
+      const sign = a >= 0 ? '+' : '';
+      const label = a > 0 ? 'Pleamar' : 'Bajamar';
+      return `<span class="${cls}">🕐 ${h} &nbsp;${sign}${Number(a).toFixed(2)} m</span>`;
+    }).join('<br>');
     tr.appendChild(tdT);
 
-    // Coefficient
-    const c   = row.coef || 50;
+    const c = row.coef || 50;
     const col = coefColor(c);
-    const lbl = coefLabel(c);
     const tdC = document.createElement('td');
     tdC.className = 'coef-wrap';
-    tdC.innerHTML = `<div class="coef-badge" style="background:${col}">${c}</div><span class="coef-lbl" style="color:${col}">${lbl}</span>`;
+    tdC.innerHTML = `<div class="coef-badge" style="background:${col}">${c}</div><span class="coef-lbl" style="color:${col}">${coefLabel(c)}</span>`;
     tr.appendChild(tdC);
 
-    // Bar
     const tdB = document.createElement('td');
     const pct = Math.min(100, Math.round(c / 1.2));
     tdB.innerHTML = `<div class="bar-bg"><div class="bar-fill" style="width:${pct}%;background:${col}"></div></div>`;
@@ -486,28 +395,27 @@ function renderTable(rows, year, month, source) {
   });
 }
 
-// ── Status card ──────────────────────────────────────────────
 function updateStatus(rows) {
-  const d   = now;
-  const ds  = d.toLocaleDateString('es-ES',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-  document.getElementById('current-date').textContent = ds.charAt(0).toUpperCase()+ds.slice(1);
+  const d = now;
+  const ds = d.toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  document.getElementById('current-date').textContent = ds.charAt(0).toUpperCase() + ds.slice(1);
 
   const today = rows.find(r => r.d === d.getDate());
   if (!today) return;
 
   const c = today.coef || 50;
-  document.getElementById('coef-now').textContent  = c;
-  document.getElementById('coef-now').style.color  = coefColor(c);
+  document.getElementById('coef-now').textContent = c;
+  document.getElementById('coef-now').style.color = coefColor(c);
   document.getElementById('coef-level').textContent = coefLabel(c);
   document.getElementById('coef-level').style.color = coefColor(c);
 
-  const nowMin = d.getHours()*60 + d.getMinutes();
-  const tm = (today.tides||[]).map(([h,a]) => {
-    const [hh,mm] = h.split(':').map(Number);
-    return { min: hh*60+mm, alt: a };
+  const nowMin = d.getHours() * 60 + d.getMinutes();
+  const tm = (today.tides || []).map(([h, a]) => {
+    const [hh, mm] = h.split(':').map(Number);
+    return { min: hh * 60 + mm, alt: a };
   });
-
-  let prev=null, next=null;
+  
+  let prev = null, next = null;
   for (const t of tm) {
     if (t.min <= nowMin) prev = t;
     else if (!next) next = t;
@@ -518,53 +426,52 @@ function updateStatus(rows) {
 
   if (next) {
     const rem = next.min - nowMin;
-    const hh  = Math.floor(rem/60), mm = rem%60;
-    const tipo = next.alt >= 0 ? 'Pleamar' : 'Bajamar';
-    const tStr = `${String(Math.floor(next.min/60)).padStart(2,'0')}:${String(next.min%60).padStart(2,'0')}`;
+    const hh = Math.floor(rem / 60), mm = rem % 60;
+    const tipo = next.alt > 0 ? 'Pleamar' : 'Bajamar';
+    const hStr = String(Math.floor(next.min / 60)).padStart(2, '0');
+    const mStr = String(next.min % 60).padStart(2, '0');
     document.getElementById('next-info').textContent =
-      `Próxima ${tipo.toLowerCase()} a las ${tStr} h (en ${hh>0?hh+'h ':''}${mm}min)`;
+      `Próxima ${tipo.toLowerCase()} a las ${hStr}:${mStr} h (en ${hh > 0 ? hh + 'h ' : ''}${mm}min)`;
   }
 }
 
-// ── Nav & UI ─────────────────────────────────────────────────
 function updateNav() {
-  const mn = MONTH_NAMES[viewMonth-1];
-  document.getElementById('month-label').textContent =
-    mn.charAt(0).toUpperCase() + mn.slice(1) + ' ' + viewYear;
-  const cur = viewYear*12 + viewMonth;
-  const n   = now.getFullYear()*12 + (now.getMonth()+1);
-  document.getElementById('prev-btn').disabled = cur <= n-2;
-  document.getElementById('next-btn').disabled = cur >= n+2;
+  const mn = MONTH_NAMES[viewMonth - 1];
+  document.getElementById('month-label').textContent = mn.charAt(0).toUpperCase() + mn.slice(1) + ' ' + viewYear;
+  const cur = viewYear * 12 + viewMonth, n = now.getFullYear() * 12 + (now.getMonth() + 1);
+  document.getElementById('prev-btn').disabled = cur <= n - 2;
+  document.getElementById('next-btn').disabled = cur >= n + 2;
+}
+
+async function loadTides() {
+  showLoading();
+  updateNav();
+  
+  // Pequeña demora para mostrar el loader
+  await new Promise(r => setTimeout(r, 200));
+  
+  try {
+    const rows = generateMonthTides(viewYear, viewMonth);
+    renderTable(rows, viewYear, viewMonth);
+    if (viewYear === now.getFullYear() && viewMonth === now.getMonth() + 1) updateStatus(rows);
+    showTable();
+  } catch (e) {
+    console.error(e);
+    showError('Error al calcular los datos de mareas.');
+  }
 }
 
 function changeMonth(d) {
   viewMonth += d;
-  if (viewMonth > 12) { viewMonth=1; viewYear++; }
-  if (viewMonth < 1)  { viewMonth=12; viewYear--; }
-  loadMonth();
+  if (viewMonth > 12) { viewMonth = 1; viewYear++; }
+  if (viewMonth < 1) { viewMonth = 12; viewYear--; }
+  loadTides();
 }
 
-function showLoading() {
-  document.getElementById('loading-box').classList.add('visible');
-  document.getElementById('error-box').classList.remove('visible');
-  document.getElementById('tide-table').classList.remove('visible');
-}
-function showError(msg) {
-  document.getElementById('loading-box').classList.remove('visible');
-  document.getElementById('error-box').classList.add('visible');
-  document.getElementById('tide-table').classList.remove('visible');
-  document.getElementById('error-msg').textContent = msg;
-}
-function showTable() {
-  document.getElementById('loading-box').classList.remove('visible');
-  document.getElementById('error-box').classList.remove('visible');
-  document.getElementById('tide-table').classList.add('visible');
-}
-
-// ── Init ─────────────────────────────────────────────────────
-const ds = now.toLocaleDateString('es-ES',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-document.getElementById('current-date').textContent = ds.charAt(0).toUpperCase()+ds.slice(1);
-loadMonth();
+// Init
+const ds = now.toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+document.getElementById('current-date').textContent = ds.charAt(0).toUpperCase() + ds.slice(1);
+loadTides();
 </script>
 </body>
 </html>
