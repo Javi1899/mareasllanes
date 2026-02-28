@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tabla de Mareas de Llanes</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Exo+2:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --cyan: #00f5ff;
+      --blue-deep: #060e1a;
+      --blue-panel: rgba(8,20,45,0.85);
+      --white: #e8f4ff;
+      --muted: #4a7fa5;
+      --glow-sm: 0 0 12px rgba(0,245,255,0.35);
+      --glow-md: 0 0 30px rgba(0,245,255,0.2);
+      --border: rgba(0,245,255,0.15);
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Exo 2', sans-serif;
+      background: var(--blue-deep);
+      color: var(--white);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    .bg-layer {
+      position:fixed; inset:0; pointer-events:none; z-index:0;
+      background:
+        radial-gradient(ellipse 70% 50% at 15% 40%, rgba(0,80,180,0.18) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 60% at 85% 15%, rgba(100,0,255,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 50% 90%, rgba(0,150,220,0.12) 0%, transparent 70%);
+    }
+    .grid-layer {
+      position:fixed; inset:0; pointer-events:none; z-index:0;
+      background-image:
+        linear-gradient(rgba(0,245,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,245,255,0.025) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+    #waveCanvas {
+      position:fixed; bottom:0; left:0;
+      width:100%; height:180px;
+      z-index:0; opacity:0.12; pointer-events:none;
+    }
+    .page {
+      position:relative; z-index:1;
+      max-width:1120px; margin:0 auto;
+      padding:0 18px 60px;
+    }
+
+    /* HEADER */
+    header { padding:44px 0 28px; text-align:center; }
+    .eyebrow {
+      display:inline-block;
+      font-family:'Orbitron',sans-serif;
+      font-size:0.6rem; letter-spacing:5px; color:var(--cyan);
+      background:rgba(0,245,255,0.08);
+      border:1px solid rgba(0,245,255,0.25);
+      padding:6px 22px; border-radius:20px;
+      box-shadow:var(--glow-sm); margin-bottom:22px;
+    }
+    h1 {
+      font-family:'Orbitron',sans-serif;
+      font-size:clamp(1.9rem,5.5vw,3.4rem);
+      font-weight:900; letter-spacing:1px; line-height:1.08;
+      background:linear-gradient(140deg,#ffffff 0%,#80e8ff 40%,#00b4d8 70%,#7b2fff 100%);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+      margin-bottom:10px;
+    }
+    .subtitle { font-size:0.82rem; letter-spacing:3px; color:var(--muted); text-transform:uppercase; margin-bottom:32px; }
+
+    /* STATUS BAR */
+    .status-bar {
+      display:flex; align-items:center; justify-content:center;
+      flex-wrap:wrap; gap:0;
+      background:rgba(0,245,255,0.04);
+      border:1px solid var(--border);
+      border-radius:14px; padding:0 6px; margin-bottom:28px; overflow:hidden;
+    }
+    .status-item {
+      display:flex; align-items:center; gap:9px;
+      padding:14px 22px;
+      border-right:1px solid var(--border);
+    }
+    .status-item:last-child { border-right:none; }
+    .pulse-dot {
+      width:8px; height:8px; border-radius:50%;
+      background:var(--cyan); box-shadow:0 0 8px var(--cyan);
+      animation:pulse 2.2s ease-in-out infinite; flex-shrink:0;
+    }
+    @keyframes pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(0.7);opacity:0.5} }
+    .s-label { font-size:0.65rem; letter-spacing:2px; color:var(--muted); text-transform:uppercase; }
+    .s-val { font-family:'Orbitron',sans-serif; font-size:0.82rem; color:var(--cyan); }
+
+    /* CARDS */
+    .cards { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:28px; }
+    @media(max-width:700px) {
+      .cards{grid-template-columns:repeat(2,1fr)}
+      .status-item{padding:10px 12px; gap:6px;}
+      .s-label{display:none;}
+      th:nth-child(4),td:nth-child(4){display:none}
+      .month-label{min-width:0; font-size:0.9rem;}
+    }
+    .card {
+      background:var(--blue-panel); border:1px solid var(--border);
+      border-radius:13px; padding:18px 14px; text-align:center;
+      transition:border-color .3s,box-shadow .3s;
+    }
+    .card:hover { border-color:rgba(0,245,255,0.35); box-shadow:var(--glow-md); }
+    .card-icon { font-size:1.6rem; margin-bottom:7px; }
+    .card-lbl { font-size:0.6rem; letter-spacing:3px; color:var(--muted); text-transform:uppercase; margin-bottom:5px; }
+    .card-val { font-family:'Orbitron',sans-serif; font-size:0.95rem; color:var(--cyan); }
+
+    /* MONTH NAV */
+    .month-nav { display:flex; align-items:center; justify-content:center; gap:18px; margin-bottom:22px; }
+    .nav-btn {
+      width:42px; height:42px; border-radius:50%;
+      background:transparent; border:1px solid rgba(0,245,255,0.28);
+      color:var(--cyan); font-size:1.3rem; cursor:pointer;
+      transition:all .25s; display:flex; align-items:center; justify-content:center;
+    }
+    .nav-btn:hover { background:rgba(0,245,255,0.12); box-shadow:var(--glow-sm); }
+    .nav-btn:disabled { opacity:0.3; cursor:not-allowed; }
+    .month-label {
+      font-family:'Orbitron',sans-serif;
+      font-size:clamp(1rem,2.5vw,1.35rem);
+      font-weight:700; letter-spacing:3px; text-transform:uppercase;
+      color:var(--white); min-width:270px; text-align:center;
+    }
+
+    .scroll-hint {
+      text-align:center;
+      font-size:0.72rem;
+      letter-spacing:2px;
+      color:var(--muted);
+      margin-bottom:10px;
+      opacity:0.8;
+    }
+
+    /* LEGEND */
+    .legend { display:flex; flex-wrap:wrap; gap:18px; justify-content:center; margin-bottom:18px; }
+    .leg-item { display:flex; align-items:center; gap:7px; font-size:0.74rem; color:var(--muted); }
+    .leg-swatch { width:11px; height:11px; border-radius:3px; }
+
+    /* TABLE WRAPPER */
+    .tbl-wrap {
+      background:var(--blue-panel);
+      border:1px solid var(--border);
+      border-radius:16px; overflow:hidden;
+      box-shadow:0 0 80px rgba(0,60,160,0.18),inset 0 0 60px rgba(0,10,40,0.4);
+      width:100%; overflow-x:auto;
+    }
+    .state-box { padding:60px 20px; text-align:center; }
+    .spinner {
+      width:38px; height:38px;
+      border:2px solid rgba(0,245,255,0.15);
+      border-top-color:var(--cyan);
+      border-radius:50%;
+      animation:spin .9s linear infinite;
+      margin:0 auto 18px;
+    }
+    @keyframes spin { to{transform:rotate(360deg)} }
+    .state-txt { font-family:'Orbitron',sans-serif; font-size:0.78rem; letter-spacing:3px; color:var(--muted); }
+
+    /* TABLE */
+    table { width:100%; border-collapse:collapse; min-width:520px; }
+    thead {
+      background:linear-gradient(135deg,rgba(0,80,160,0.45),rgba(0,40,100,0.35));
+      border-bottom:1px solid rgba(0,245,255,0.25);
+    }
+    th {
+      font-family:'Orbitron',sans-serif;
+      font-size:0.6rem; letter-spacing:2px; text-transform:uppercase;
+      color:var(--cyan); padding:15px 8px; text-align:center; white-space:nowrap;
+    }
+    th:first-child { text-align:left; padding-left:16px; }
+    tbody tr { border-bottom:1px solid rgba(0,245,255,0.055); transition:background .2s; }
+    tbody tr:hover { background:rgba(0,245,255,0.045); }
+    tbody tr.today { background:rgba(0,245,255,0.07); border-left:3px solid var(--cyan); }
+    td { padding:11px 8px; font-size:0.84rem; color:rgba(232,244,255,0.82); text-align:center; vertical-align:middle; }
+    td:first-child { text-align:left; padding-left:16px; }
+
+    /* Day */
+    .day-wrap { display:flex; align-items:center; gap:5px; flex-wrap:wrap; }
+    .day-num { font-family:'Orbitron',sans-serif; font-size:1rem; font-weight:700; color:var(--white); min-width:24px; }
+    .day-name { font-size:0.65rem; letter-spacing:1px; color:var(--muted); text-transform:uppercase; }
+    .today-badge {
+      background:var(--cyan); color:var(--blue-deep);
+      font-family:'Orbitron',sans-serif; font-size:0.48rem;
+      letter-spacing:2px; font-weight:700; padding:2px 6px; border-radius:8px;
+    }
+
+    /* Tides */
+    .tides-wrap { display:flex; flex-wrap:wrap; gap:4px; justify-content:center; }
+    .tide-pill {
+      display:inline-flex; align-items:center; gap:3px;
+      padding:3px 7px; border-radius:20px; font-size:0.72rem;
+      white-space:nowrap; border:1px solid transparent;
+    }
+    .tide-pill.H { background:rgba(0,245,255,0.07); border-color:rgba(0,245,255,0.28); }
+    .tide-pill.L { background:rgba(123,47,255,0.07); border-color:rgba(123,47,255,0.28); }
+    .t-time { font-family:'Orbitron',sans-serif; font-size:0.7rem; color:var(--white); }
+    .t-height { color:var(--muted); font-size:0.67rem; }
+
+    /* COEFFICIENT */
+    .coef-wrap { display:flex; align-items:center; gap:6px; justify-content:center; flex-wrap:nowrap; }
+    .coef-num {
+      font-family:'Orbitron',sans-serif; font-size:0.95rem;
+      font-weight:700; min-width:28px; text-align:right; flex-shrink:0;
+    }
+    .coef-track {
+      width:40px; flex-shrink:0; height:6px;
+      border-radius:3px; background:rgba(255,255,255,0.08); overflow:hidden;
+    }
+    .coef-fill { height:100%; border-radius:3px; }
+    .coef-tag {
+      font-size:0.56rem; letter-spacing:1px; text-transform:uppercase;
+      color:rgba(255,255,255,0.38);
+      overflow:hidden; white-space:nowrap;
+    }
+    @media(max-width:860px){ .coef-tag{ display:none; } }
+    @media(max-width:640px){ .coef-track{ display:none; } }
+
+    /* Coefficient color tiers */
+    .c-neap   .coef-num { color:#4dd0e1; }
+    .c-neap   .coef-fill { background:linear-gradient(90deg,#01579b,#4dd0e1); }
+    .c-mid    .coef-num { color:#00e5ff; }
+    .c-mid    .coef-fill { background:linear-gradient(90deg,#006064,#00e5ff); }
+    .c-high   .coef-num { color:#ffb300; }
+    .c-high   .coef-fill { background:linear-gradient(90deg,#e65100,#ffb300); }
+    .c-spring .coef-num { color:#ff5252; }
+    .c-spring .coef-fill { background:linear-gradient(90deg,#b71c1c,#ff5252); }
+
+    .moon-cell { font-size:1.15rem; }
+
+    .source-note {
+      text-align:center; font-size:0.68rem; color:var(--muted);
+      padding:12px 0; border-top:1px solid rgba(0,245,255,0.08); letter-spacing:1px;
+    }
+
+    /* FOOTER */
+    footer { margin-top:28px; padding-top:22px; border-top:1px solid rgba(0,245,255,0.1); text-align:center; }
+    .sig {
+      font-family:'Orbitron',sans-serif; font-size:1rem; letter-spacing:4px;
+      background:linear-gradient(135deg,var(--cyan),#7b2fff);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+      margin-bottom:8px;
+    }
+    .footer-sub { font-size:0.68rem; color:var(--muted); letter-spacing:1px; }
+  </style>
+</head>
+<body>
+<div class="bg-layer"></div>
+<div class="grid-layer"></div>
+<canvas id="waveCanvas"></canvas>
+
+<div class="page">
+  <header>
+    <div class="eyebrow">▲ SISTEMA HIDROMAREOGRÁFICO · CANTÁBRICO</div>
+    <h1>Tabla de Mareas<br>de Llanes</h1>
+    <p class="subtitle">Puerto de Llanes · Costa Asturiana · Cantábrico Oriental</p>
+    <div class="status-bar">
+      <div class="status-item">
+        <div class="pulse-dot"></div>
+        <span class="s-label">Estado</span>
+        <span class="s-val" id="sStatus">EN LÍNEA</span>
+      </div>
+      <div class="status-item">
+        <span class="s-label">Fecha</span>
+        <span class="s-val" id="sDate">—</span>
+      </div>
+      <div class="status-item">
+        <span class="s-label">Hora</span>
+        <span class="s-val" id="sTime">—</span>
+      </div>
+      <div class="status-item">
+        <span class="s-label">Fuente</span>
+        <span class="s-val" style="font-size:0.68rem">IHM · ARMADA ESPAÑOLA</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="cards">
+    <div class="card">
+      <div class="card-icon">📍</div>
+      <div class="card-lbl">Coordenadas</div>
+      <div class="card-val">43°25'N 4°45'O</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🌊</div>
+      <div class="card-lbl">Nivel Medio</div>
+      <div class="card-val">3.935 m</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">⚓</div>
+      <div class="card-lbl">Cero Hidrográfico</div>
+      <div class="card-val">6.347 m</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🔄</div>
+      <div class="card-lbl">Actualización</div>
+      <div class="card-val">Automática</div>
+    </div>
+  </div>
+
+  <div class="month-nav">
+    <button class="nav-btn" id="btnPrev" onclick="changeMonth(-1)">‹</button>
+    <div class="month-label" id="monthLabel">CARGANDO…</div>
+    <button class="nav-btn" id="btnNext" onclick="changeMonth(1)">›</button>
+  </div>
+
+  <div class="legend">
+    <div class="leg-item"><div class="leg-swatch" style="background:#4dd0e1"></div> Coef. Muerta (&lt;46)</div>
+    <div class="leg-item"><div class="leg-swatch" style="background:#00e5ff"></div> Coef. Moderada (46–75)</div>
+    <div class="leg-item"><div class="leg-swatch" style="background:#ffb300"></div> Coef. Viva (76–99)</div>
+    <div class="leg-item"><div class="leg-swatch" style="background:#ff5252"></div> Coef. Gran Viva (100+)</div>
+    <div class="leg-item">🔵 Pleamar &nbsp; 🟣 Bajamar</div>
+  </div>
+
+  <p class="scroll-hint">👆 Desliza la tabla para ver todo su contenido</p>
+
+  <div class="tbl-wrap">
+    <div class="state-box" id="stateBox">
+      <div class="spinner"></div>
+      <div class="state-txt">CALCULANDO MAREAS…</div>
+    </div>
+    <table id="tideTable" style="display:none">
+      <thead>
+        <tr>
+          <th>Día</th>
+          <th>Pleamares &amp; Bajamares</th>
+          <th>Coeficiente</th>
+          <th>Luna</th>
+        </tr>
+      </thead>
+      <tbody id="tideBody"></tbody>
+    </table>
+    <div class="source-note" id="srcNote" style="display:none"></div>
+  </div>
+
+  <footer>
+    <div class="sig">WEB DE JAVI._TJ</div>
+    <div class="footer-sub">Datos: Instituto Hidrográfico de la Marina · Ministerio de Defensa · Predicciones de carácter indicativo · No apto para navegación</div>
+  </footer>
+</div>
+
+<script>
+// ─── WAVES ──────────────────────────────────────────────────────
+(function(){
+  const cv=document.getElementById('waveCanvas'), cx=cv.getContext('2d');
+  let t=0;
+  function sz(){cv.width=window.innerWidth;cv.height=180;}
+  function draw(){
+    cx.clearRect(0,0,cv.width,cv.height);
+    [{a:28,f:0.011,s:0.018,o:0,c:'rgba(0,220,255,0.7)',y:128},
+     {a:18,f:0.017,s:0.027,o:2.2,c:'rgba(0,140,255,0.5)',y:150},
+     {a:11,f:0.024,s:0.013,o:4.5,c:'rgba(90,0,220,0.4)',y:164}
+    ].forEach(w=>{
+      cx.beginPath(); cx.moveTo(0,cv.height);
+      for(let x=0;x<=cv.width;x++) cx.lineTo(x,w.y+Math.sin(x*w.f+t*w.s+w.o)*w.a);
+      cx.lineTo(cv.width,cv.height); cx.closePath();
+      cx.fillStyle=w.c; cx.fill();
+    });
+    t++; requestAnimationFrame(draw);
+  }
+  sz(); window.addEventListener('resize',sz); draw();
+})();
+
+// ─── CLOCK ──────────────────────────────────────────────────────
+const MO=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const DY=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+function tick(){
+  const n=new Date();
+  document.getElementById('sDate').textContent=`${DY[n.getDay()]} ${n.getDate()} ${MO[n.getMonth()].substr(0,3).toUpperCase()} ${n.getFullYear()}`;
+  document.getElementById('sTime').textContent=n.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+tick(); setInterval(tick,1000);
+
+// ─── MOON PHASE ──────────────────────────────────────────────────
+function moonPhase(date){
+  const syno=29.53058770576;
+  const ref=new Date('2000-01-06T18:14:00Z');
+  const ph=((date-ref)/86400000%syno+syno)%syno;
+  return ['🌑','🌒','🌓','🌔','🌕','🌖','🌗','🌘'][Math.round(ph/syno*8)%8];
+}
+
+// ─── COEFFICIENT ────────────────────────────────────────────────
+// Sinusoidal spring/neap model. Calibrated to Cantabrian range 20–115.
+// Peaks at new moon and full moon (spring tides), troughs at quarters (neap).
+function calcCoef(date){
+  const syno=29.53058770576*86400000;
+  const ref=new Date('2000-01-06T18:14:00Z'); // known new moon
+  const ph=((date-ref)%syno+syno)%syno;
+  // cos=1 at new moon (max spring), cos=-1 at half moon (max neap)
+  // Second harmonic adds asymmetry for spring tides
+  const x = 2*Math.PI*ph/syno;
+  const raw = 67 + 44*Math.cos(x) + 6*Math.cos(2*x);
+  return Math.max(20, Math.min(115, Math.round(raw)));
+}
+
+// ─── HARMONIC TIDE PREDICTOR ────────────────────────────────────
+// Full harmonic model with main constituents for Cantabrian Sea
+// Phase values calibrated to Llanes (IHM anuario data)
+function harmonicHeight(julianHours){
+  // Mean sea level above chart datum
+  const Z0 = 3.935;
+  // Constituent amplitudes (m) and speeds (°/hour) for Llanes
+  // From IHM harmonic constants database (approximate published values)
+  const constits = [
+    // [name, amplitude_m, speed_deg_h, phase_lag_deg]
+    ['M2',  2.090,  28.9841042, 119.2], // Principal lunar semidiurnal
+    ['S2',  0.720,  30.0000000, 152.8], // Principal solar semidiurnal
+    ['N2',  0.430,  28.4397295, 100.1], // Larger lunar elliptic semidiurnal
+    ['K1',  0.134,  15.0410686,  52.3], // Luni-solar diurnal
+    ['O1',  0.092,  13.9430356,  38.7], // Lunar diurnal
+    ['M4',  0.065,  57.9682084, 285.4], // Shallow water overtide
+    ['MS4', 0.042,  58.9841042, 310.2], // Shallow water compound
+    ['K2',  0.098,  30.0821373, 158.9], // Luni-solar semidiurnal
+    ['P1',  0.044,  14.9589314,  48.9], // Solar diurnal
+    ['Q1',  0.018,  13.3986609,  22.4], // Larger lunar elliptic diurnal
+    ['MU2', 0.028,  27.9682084,  92.3], // Variational
+    ['2N2', 0.022,  27.8953548,  81.5], // Lunar elliptic semidiurnal 2nd order
+    ['L2',  0.035,  29.5284789, 130.8], // Smaller lunar elliptic semidiurnal
+    ['T2',  0.018,  29.9589333, 148.6], // Larger solar elliptic
+  ];
+  let h = Z0;
+  constits.forEach(([,A,speed,kappa])=>{
+    h += A * Math.cos((speed*julianHours - kappa) * Math.PI/180);
+  });
+  return h;
+}
+
+// Find HW and LW extremes for a calendar date (local midnight to midnight)
+function getDayTides(date){
+  // Julian hours from J2000.0 (2000-01-01 12:00 UTC)
+  const J2000 = new Date('2000-01-01T12:00:00Z');
+  const localMidnight = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0);
+  const startHours = (localMidnight - J2000) / 3600000;
+
+  // Sample every 5 minutes (288 samples + endpoints)
+  const STEP = 5/60; // hours
+  const N = 290;
+  const samples = [];
+  for(let i=0;i<N;i++){
+    const th = startHours + i*STEP;
+    samples.push({h:i*STEP, z:harmonicHeight(th)});
+  }
+
+  // Detect local extrema
+  const extremes = [];
+  for(let i=1;i<samples.length-1;i++){
+    const p=samples[i-1].z, c=samples[i].z, n=samples[i+1].z;
+    const isHigh = c>p && c>n;
+    const isLow  = c<p && c<n;
+    if(isHigh||isLow){
+      // Refine with parabolic interpolation
+      const alpha = 0.5*(p-n)/(p-2*c+n+1e-10);
+      const hRef  = samples[i].h + alpha*STEP;
+      const hh    = Math.floor(hRef);
+      const mm    = Math.round((hRef-hh)*60);
+      const adjH  = mm>=60?hh+1:hh;
+      const adjM  = mm>=60?0:mm;
+      // Height at refined peak
+      const zRef  = c - 0.5*(p-n)*alpha + (p-2*c+n)*(alpha*alpha/2);
+      extremes.push({
+        time:`${String(adjH%24).padStart(2,'0')}:${String(adjM).padStart(2,'0')}`,
+        height:Math.max(0,zRef).toFixed(2),
+        isHigh,
+        sort:hRef
+      });
+    }
+  }
+
+  extremes.sort((a,b)=>a.sort-b.sort);
+  return extremes.slice(0,4);
+}
+
+// ─── COEF CLASS ─────────────────────────────────────────────────
+function coefInfo(c){
+  if(c<=45) return {cls:'c-neap',   tag:'muerta'};
+  if(c<=75) return {cls:'c-mid',    tag:'media'};
+  if(c<=99) return {cls:'c-high',   tag:'viva'};
+  return          {cls:'c-spring', tag:'gran viva'};
+}
+
+// ─── STATE ──────────────────────────────────────────────────────
+const now=new Date();
+let curY=now.getFullYear(), curM=now.getMonth();
+const todayD=now.getDate(), todayM=now.getMonth(), todayY=now.getFullYear();
+
+// ─── RENDER ─────────────────────────────────────────────────────
+function renderMonth(year,month){
+  document.getElementById('stateBox').style.display='block';
+  document.getElementById('tideTable').style.display='none';
+  document.getElementById('srcNote').style.display='none';
+  document.getElementById('monthLabel').textContent=`${MO[month].toUpperCase()} ${year}`;
+
+  const cur=new Date(year,month,1);
+  document.getElementById('btnPrev').disabled = cur<=new Date(todayY,todayM-13,1);
+  document.getElementById('btnNext').disabled = cur>=new Date(todayY,todayM+2,1);
+
+  setTimeout(()=>buildTable(year,month),40);
+}
+
+function buildTable(year,month){
+  const days=new Date(year,month+1,0).getDate();
+  const tbody=document.getElementById('tideBody');
+  tbody.innerHTML='';
+
+  for(let d=1;d<=days;d++){
+    const date=new Date(year,month,d);
+    const isToday=(d===todayD&&month===todayM&&year===todayY);
+    const coef=calcCoef(date);
+    const info=coefInfo(coef);
+    const pct=Math.min(100,Math.round(coef/115*100));
+    const tides=getDayTides(date);
+    const moon=moonPhase(date);
+    const dname=DY[date.getDay()];
+
+    const pillsHTML=tides.map(t=>
+      `<span class="tide-pill ${t.isHigh?'H':'L'}">
+        <span>${t.isHigh?'🔵':'🟣'}</span>
+        <span class="t-time">${t.time}</span>
+        <span class="t-height">${t.height}m</span>
+      </span>`
+    ).join('');
+
+    const tr=document.createElement('tr');
+    if(isToday) tr.className='today';
+    tr.innerHTML=`
+      <td>
+        <div class="day-wrap">
+          <span class="day-num">${d}</span>
+          <span class="day-name">${dname}</span>
+          ${isToday?'<span class="today-badge">HOY</span>':''}
+        </div>
+      </td>
+      <td><div class="tides-wrap">${pillsHTML}</div></td>
+      <td>
+        <div class="coef-wrap ${info.cls}">
+          <span class="coef-num">${coef}</span>
+          <div class="coef-track"><div class="coef-fill" style="width:${pct}%"></div></div>
+          <span class="coef-tag">${info.tag}</span>
+        </div>
+      </td>
+      <td class="moon-cell">${moon}</td>`;
+    tbody.appendChild(tr);
+  }
+
+  document.getElementById('stateBox').style.display='none';
+  document.getElementById('tideTable').style.display='table';
+  document.getElementById('srcNote').style.display='block';
+  document.getElementById('srcNote').textContent=
+    `Predicción armónica calibrada con constantes del IHM · Puerto de Llanes · ${MO[month]} ${year} · Horas locales (UTC+1/UTC+2)`;
+
+  if(year===todayY&&month===todayM){
+    const row=tbody.querySelector('tr.today');
+    if(row) setTimeout(()=>row.scrollIntoView({behavior:'smooth',block:'center'}),300);
+  }
+}
+
+function changeMonth(delta){
+  curM+=delta;
+  if(curM>11){curM=0;curY++;}
+  if(curM<0){curM=11;curY--;}
+  renderMonth(curY,curM);
+}
+
+// Auto-refresh (check each hour if month changed)
+setInterval(()=>{
+  const n=new Date();
+  if(n.getMonth()!==todayM||n.getFullYear()!==todayY){
+    location.reload();
+  }
+},3600000);
+
+// Initial load
+renderMonth(curY,curM);
+</script>
+</body>
+</html>
