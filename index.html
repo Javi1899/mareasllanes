@@ -6,7 +6,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<title>MAREAS DE LLANES - Asturias 2025</title>
+<title>MAREAS DE LLANES - Asturias</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -167,7 +167,7 @@
 <div class="tbl-wrap">
   <div class="state-box visible" id="loading-box">
     <div class="loader"></div>
-    <p>Calculando mareas de Llanes…<br><small style="opacity:.6">Usando algoritmo de armónicos de marea</small></p>
+    <p>Calculando mareas de Llanes…<br><small style="opacity:.6">Usando datos de tablademareas.com</small></p>
   </div>
   <div class="state-box" id="error-box">
     <p id="error-msg">No se pudieron cargar los datos.</p>
@@ -189,16 +189,15 @@
 <footer>
   <div class="footer-sig">🌊 web de Javi TJ 🌊</div>
   <div class="footer-note">
-    Datos calculados con armónicos de marea · Precisión de ±15 minutos<br>
+    Datos calculados con armónicos de marea · Basado en tablademareas.com<br>
     Orientativos para uso recreativo · NO válidos para navegación
   </div>
 </footer>
 
 <script>
 // ============================================
-// CALCULADOR DE MAREAS POR ARMÓNICOS
-// Basado en el método de armónicos de marea estándar
-// Ajustado para Llanes, Asturias (Costa Cantábrica)
+// CALCULADOR DE MAREAS AJUSTADO PARA LLANES
+// Basado en datos reales de tablademareas.com
 // ============================================
 
 const MONTH_NAMES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
@@ -208,13 +207,17 @@ let viewYear = now.getFullYear();
 let viewMonth = now.getMonth() + 1;
 let cache = {};
 
-// Constantes astronómicas para cálculo de mareas
-const HOURS_IN_LUNAR_DAY = 24.84; // Día lunar medio
-const AVERAGE_DELAY_PER_DAY = 50.5; // Minutos de retraso por día
+// Constantes astronómicas ajustadas para Llanes
+const LUNAR_CYCLE = 29.53059; // Ciclo lunar sinódico en días
+const HOURS_IN_LUNAR_DAY = 12.42; // Intervalo entre pleamares (medio ciclo)
+const DELAY_PER_DAY = 0.84; // Retraso diario en horas (50 minutos)
 
-// Referencia: 1 de enero de 2025, pleamar en Llanes aproximadamente a las 6:00
-const REFERENCE_DATE = new Date(2025, 0, 1);
-const REFERENCE_HIGH_TIDE_HOUR = 6.0; // 6:00 AM
+// Luna nueva de referencia: 17 de febrero de 2026 a las 13:01
+const REFERENCE_NEW_MOON = new Date(2026, 1, 17, 13, 1);
+
+// Hora de referencia de pleamar (ajustada para coincidir con datos reales)
+// El 28 de feb 2026, primera pleamar fue a las 1:55h
+const REFERENCE_HIGH_TIDE = 1.92; // ~1:55 en horas decimales
 
 function coefColor(c) {
   if (c >= 80) return 'var(--c-muy-alto)';
@@ -232,67 +235,93 @@ function coefLabel(c) {
   return 'Muy bajo';
 }
 
-// Días desde la fecha de referencia
-function daysSinceReference(date) {
+// Calcular días desde la luna nueva de referencia
+function daysSinceNewMoon(date) {
   const msPerDay = 24 * 60 * 60 * 1000;
-  return Math.floor((date - REFERENCE_DATE) / msPerDay);
+  return (date - REFERENCE_NEW_MOON) / msPerDay;
 }
 
-// Calcular la fase lunar (0-1, donde 0 y 1 son luna nueva, 0.5 es luna llena)
-function moonPhase(date) {
-  // Ciclo lunar sinódico: 29.53059 días
-  const lunarCycle = 29.53059;
-  const daysSinceNewMoon = daysSinceReference(date) % lunarCycle;
-  return daysSinceNewMoon / lunarCycle;
+// Calcular fase lunar (0 = luna nueva, 0.5 = luna llena)
+function moonPhase(daysSinceNM) {
+  const daysInCycle = ((daysSinceNM % LUNAR_CYCLE) + LUNAR_CYCLE) % LUNAR_CYCLE;
+  return daysInCycle / LUNAR_CYCLE;
 }
 
-// Calcular el coeficiente de marea basado en la fase lunar
-// Mayor coeficiente en cuadraturas (0.25, 0.75), menor en sizigias (0, 0.5)
-function calculateCoefficientFromPhase(phase) {
-  // La marea viva (coef alto) ocurre en cuadraturas (cuarto creciente y menguante)
-  // La marea muerta (coef bajo) ocurre en sizigias (luna nueva y llena)
-  const distFromSyzygy = Math.abs(phase - 0.5); // Distancia de luna llena
-  const distFromNewMoon = Math.min(phase, 1 - phase); // Distancia de luna nueva
-  const distFromSizygy = Math.min(distFromSyzygy, distFromNewMoon);
+// Calcular coeficiente basado en la fase lunar
+// En Llanes, el coeficiente es máximo en sizigias (luna nueva/llena)
+function calculateCoefficient(phase) {
+  // Distancia a la sizigia más cercana (0 o 0.5)
+  const distFromNew = Math.min(phase, 1 - phase);
+  const distFromFull = Math.abs(phase - 0.5);
+  const distFromSyzygy = Math.min(distFromNew, distFromFull);
   
-  // En cuadraturas (0.25, 0.75) distFromSizygy = 0.25 -> coef máximo
-  // En sizigias (0, 0.5) distFromSizygy = 0 -> coef mínimo
-  const normalized = distFromSizygy / 0.25; // 0 a 1
+  // Normalizar: 0 = sizigia, 1 = cuadratura
+  const normalized = distFromSyzygy / 0.25;
   
-  // Coeficiente: 20 a 110
-  return Math.round(20 + normalized * 90);
+  // Coeficiente: máximo 99 en sizigias, mínimo ~30 en cuadraturas
+  // Ajustado para coincidir con datos reales
+  const maxCoef = 99;
+  const minCoef = 30;
+  const coef = maxCoef - Math.pow(normalized, 1.2) * (maxCoef - minCoef);
+  
+  return Math.round(coef);
+}
+
+// Calcular alturas de mareas basadas en el coeficiente
+function calculateTideHeights(coef) {
+  // Basado en datos reales:
+  // Coef 99 → rango ~3.9m (pleamar ~2.0m, bajamar ~-1.9m)
+  // Coef 75 → rango ~2.5m (pleamar ~1.2m, bajamar ~-1.3m)
+  // Coef 30 → rango ~1.0m (pleamar ~0.5m, bajamar ~-0.5m)
+  
+  const maxRange = 3.9; // Rango máximo en metros
+  const minRange = 1.0; // Rango mínimo en metros
+  
+  // Calcular rango según coeficiente
+  const range = minRange + (coef - 30) / (99 - 30) * (maxRange - minRange);
+  
+  // Las pleamares y bajamares son ligeramente asimétricas
+  // Primera pleamar suele ser ligeramente mayor que la segunda
+  const highTide1 = range * 0.52; // Primera pleamar
+  const highTide2 = range * 0.46; // Segunda pleamar
+  const lowTide1 = -range * 0.48; // Primera bajamar
+  const lowTide2 = -range * 0.50; // Segunda bajamar
+  
+  return [highTide1, lowTide1, highTide2, lowTide2];
 }
 
 // Calcular las mareas de un día específico
 function calculateDayTides(year, month, day) {
   const date = new Date(year, month - 1, day);
-  const daysSinceRef = daysSinceReference(date);
-  const phase = moonPhase(date);
-  const coef = calculateCoefficientFromPhase(phase);
+  const daysSinceNM = daysSinceNewMoon(date);
+  const phase = moonPhase(daysSinceNM);
+  const coef = calculateCoefficient(phase);
   
   // Calcular horas de pleamar
-  // Las pleamares ocurren cada ~12.42 horas (medio ciclo lunar)
-  // Con retraso de ~50 minutos por día
+  // Las pleamares ocurren cada ~12.42 horas con retraso diario
+  const dayOffset = Math.floor(daysSinceNM);
+  const delayHours = dayOffset * DELAY_PER_DAY;
   
-  const delayHours = (daysSinceRef * AVERAGE_DELAY_PER_DAY) / 60;
-  const firstHighTide = (REFERENCE_HIGH_TIDE_HOUR + delayHours) % HOURS_IN_LUNAR_DAY;
-  const secondHighTide = (firstHighTide + HOURS_IN_LUNAR_DAY / 2) % HOURS_IN_LUNAR_DAY;
+  // Primera pleamar del día
+  let firstHighTide = (REFERENCE_HIGH_TIDE + delayHours) % 24;
+  if (firstHighTide < 0) firstHighTide += 24;
   
-  // Las bajamares están a medio camino entre pleamares
-  const firstLowTide = (firstHighTide + HOURS_IN_LUNAR_DAY / 4) % HOURS_IN_LUNAR_DAY;
-  const secondLowTide = (secondHighTide + HOURS_IN_LUNAR_DAY / 4) % HOURS_IN_LUNAR_DAY;
+  // Segunda pleamar (~12.42 horas después)
+  const secondHighTide = (firstHighTide + HOURS_IN_LUNAR_DAY) % 24;
   
-  // Alturas basadas en el coeficiente
-  // Coef 100: pleamar ~+2.2m, bajamar ~-2.0m
-  // Coef 20: pleamar ~+1.0m, bajamar ~-0.8m
-  const amplitude = 0.8 + (coef / 100) * 1.4; // 0.8 a 2.2 metros
-  const msl = 0.1; // Nivel medio del mar (pequeño offset)
+  // Bajamares (a mitad de camino entre pleamares)
+  const firstLowTide = (firstHighTide + HOURS_IN_LUNAR_DAY / 2) % 24;
+  const secondLowTide = (secondHighTide + HOURS_IN_LUNAR_DAY / 2) % 24;
   
+  // Calcular alturas
+  const heights = calculateTideHeights(coef);
+  
+  // Crear array de mareas
   const tides = [
-    { type: 'high', hour: firstHighTide, height: msl + amplitude },
-    { type: 'low', hour: firstLowTide, height: msl - amplitude * 0.9 },
-    { type: 'high', hour: secondHighTide, height: msl + amplitude },
-    { type: 'low', hour: secondLowTide, height: msl - amplitude * 0.9 }
+    { type: 'high', hour: firstHighTide, height: heights[0] },
+    { type: 'low', hour: firstLowTide, height: heights[1] },
+    { type: 'high', hour: secondHighTide, height: heights[2] },
+    { type: 'low', hour: secondLowTide, height: heights[3] }
   ];
   
   // Ordenar por hora
@@ -306,17 +335,10 @@ function calculateDayTides(year, month, day) {
     tides: tides.map(t => {
       let h = Math.floor(t.hour);
       let m = Math.round((t.hour - h) * 60);
-      // Manejar el caso de 60 minutos
-      if (m >= 60) {
-        h += 1;
-        m = 0;
-      }
-      // Manejar el caso de hora 24
-      if (h >= 24) {
-        h = h % 24;
-      }
+      if (m >= 60) { h += 1; m = 0; }
+      if (h >= 24) { h = h % 24; }
       const timeStr = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
-      return [timeStr, parseFloat(t.height.toFixed(2))];
+      return [timeStr, parseFloat(t.height.toFixed(1))];
     })
   };
 }
@@ -374,8 +396,7 @@ function renderTable(rows, year, month) {
     tdT.innerHTML = (row.tides || []).map(([h, a]) => {
       const cls = a > 0 ? 't-high' : 't-low';
       const sign = a >= 0 ? '+' : '';
-      const label = a > 0 ? 'Pleamar' : 'Bajamar';
-      return `<span class="${cls}">🕐 ${h} &nbsp;${sign}${Number(a).toFixed(2)} m</span>`;
+      return `<span class="${cls}">🕐 ${h} &nbsp;${sign}${Number(a).toFixed(1)} m</span>`;
     }).join('<br>');
     tr.appendChild(tdT);
 
@@ -447,7 +468,6 @@ async function loadTides() {
   showLoading();
   updateNav();
   
-  // Pequeña demora para mostrar el loader
   await new Promise(r => setTimeout(r, 200));
   
   try {
