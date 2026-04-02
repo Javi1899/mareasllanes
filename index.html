@@ -40,7 +40,7 @@
     animation: drift 10s linear infinite;
   }
   @keyframes drift { from{transform:translateX(0)} to{transform:translateX(-58px)} }
-
+ 
   /* ── Header ── */
   header { text-align:center; padding:52px 24px 36px; }
   .eyebrow { font-size:.72rem; font-weight:500; letter-spacing:.4em; text-transform:uppercase; color:var(--accent); margin-bottom:14px; opacity:.85; }
@@ -54,7 +54,7 @@
     border-radius:100px; padding:5px 16px;
     font-size:.72rem; font-weight:600; letter-spacing:.08em; color:var(--accent);
   }
-
+ 
   /* ── Status card ── */
   .status-wrap { max-width:860px; margin:0 auto 36px; padding:0 20px; }
   .status-card {
@@ -75,29 +75,29 @@
   .sc-right .lbl { font-size:.68rem; letter-spacing:.2em; text-transform:uppercase; color:var(--muted); margin-bottom:2px; }
   #coef-now { font-family:'Playfair Display',serif; font-size:3.8rem; font-weight:900; line-height:1; }
   #coef-level { font-size:.78rem; font-weight:600; letter-spacing:.12em; text-transform:uppercase; margin-top:4px; }
-
+ 
   /* ── Month nav ── */
   .month-nav { max-width:860px; margin:0 auto 18px; padding:0 20px; display:flex; align-items:center; justify-content:space-between; }
   .mn-btn { background:rgba(56,201,224,0.08); border:1px solid rgba(56,201,224,0.25); color:var(--accent); padding:9px 20px; border-radius:100px; cursor:pointer; font-family:'DM Sans',sans-serif; font-size:.82rem; font-weight:600; letter-spacing:.04em; transition:all .25s; }
   .mn-btn:hover:not(:disabled) { background:rgba(56,201,224,0.18); transform:translateY(-1px); box-shadow:0 4px 14px rgba(56,201,224,0.15); }
   .mn-btn:disabled { opacity:.3; cursor:not-allowed; }
   #month-label { font-family:'Playfair Display',serif; font-size:1.55rem; font-weight:700; text-transform:capitalize; }
-
+ 
   /* ── Legend ── */
   .legend { max-width:860px; margin:0 auto 14px; padding:0 20px; display:flex; flex-wrap:wrap; gap:14px; }
   .leg-item { display:flex; align-items:center; gap:5px; font-size:.72rem; font-weight:500; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); }
   .leg-dot { width:9px; height:9px; border-radius:50%; }
-
+ 
   /* ── Table ── */
   .tbl-wrap { max-width:860px; margin:0 auto 56px; padding:0 20px; }
-
+ 
   .no-data-box {
     background:rgba(10,31,61,0.7); border:1px solid rgba(56,201,224,0.15);
     border-radius:16px; padding:48px 24px; text-align:center; display:none;
   }
   .no-data-box.visible { display:block; }
   .no-data-box p { color:var(--muted); font-size:.9rem; font-weight:300; line-height:1.7; }
-
+ 
   table { width:100%; border-collapse:collapse; }
   thead th { padding:11px 14px; font-size:.68rem; font-weight:600; letter-spacing:.18em; text-transform:uppercase; color:var(--accent); text-align:left; border-bottom:1px solid rgba(56,201,224,0.18); }
   tbody tr { border-bottom:1px solid rgba(255,255,255,0.04); transition:background .18s; }
@@ -115,12 +115,12 @@
   .coef-lbl { font-size:.62rem; font-weight:600; letter-spacing:.08em; text-transform:uppercase; display:block; margin-top:3px; }
   .bar-bg { background:rgba(255,255,255,0.06); border-radius:4px; height:7px; overflow:hidden; margin-top:4px; width:90px; }
   .bar-fill { height:100%; border-radius:4px; }
-
+ 
   /* ── Footer ── */
   footer { text-align:center; padding:28px 20px 40px; border-top:1px solid rgba(56,201,224,0.08); }
   .footer-sig { font-family:'Playfair Display',serif; font-size:1.25rem; font-weight:700; color:var(--accent); letter-spacing:.04em; }
   .footer-note { margin-top:10px; font-size:.7rem; color:rgba(232,244,248,0.25); line-height:1.8; }
-
+ 
   @media(max-width:600px){
     .status-card{grid-template-columns:1fr;text-align:center}
     .sc-right{text-align:center}
@@ -132,7 +132,7 @@
 </head>
 <body>
 <div class="ocean-bg"></div>
-
+ 
 <header>
   <div class="eyebrow">🌊 Asturias · España · Costa Cantábrica</div>
   <h1>MAREAS DE <em>LLANES</em></h1>
@@ -141,7 +141,7 @@
     <span class="source-badge">📋 Datos reales · Tabla de Mareas 2026 de Llanes</span>
   </div>
 </header>
-
+ 
 <!-- Estado actual -->
 <div class="status-wrap">
   <div class="status-card">
@@ -161,14 +161,14 @@
     </div>
   </div>
 </div>
-
+ 
 <!-- Navegación -->
 <div class="month-nav">
   <button class="mn-btn" id="prev-btn" onclick="changeMonth(-1)">← Anterior</button>
   <div id="month-label">—</div>
   <button class="mn-btn" id="next-btn" onclick="changeMonth(1)">Siguiente →</button>
 </div>
-
+ 
 <!-- Leyenda -->
 <div class="legend">
   <div class="leg-item"><div class="leg-dot" style="background:var(--c-muy-alto)"></div>Muy alto ≥80</div>
@@ -177,7 +177,7 @@
   <div class="leg-item"><div class="leg-dot" style="background:var(--c-bajo)"></div>Bajo 20–39</div>
   <div class="leg-item"><div class="leg-dot" style="background:var(--c-muy-bajo)"></div>Muy bajo &lt;20</div>
 </div>
-
+ 
 <!-- Tabla -->
 <div class="tbl-wrap">
   <div class="no-data-box" id="no-data-box">
@@ -196,7 +196,7 @@
     <tbody id="tbody"></tbody>
   </table>
 </div>
-
+ 
 <footer>
   <div class="footer-sig">🌊 web de Javi TJ 🌊</div>
   <div class="footer-note">
@@ -205,7 +205,7 @@
     <strong>NO válidos para navegación</strong>
   </div>
 </footer>
-
+ 
 <script>
 // ════════════════════════════════════════════════════════════════
 //  DATOS REALES — extraídos directamente de los PDFs oficiales
@@ -213,9 +213,9 @@
 //  Fuente: tablademareas.com
 //  Alturas relativas al Nivel Medio (NM): + pleamar / - bajamar
 // ════════════════════════════════════════════════════════════════
-
+ 
 const TIDE_DATA = {
-
+ 
   // ── MARZO 2026 ─────────────────────────────────────────────
   '2026-03': [
     { d:1,  dn:'D', coef:85,  tides:[['2:53', 1.5],['9:07',-1.6],['15:25', 1.4],['21:19',-1.5]] },
@@ -250,7 +250,7 @@ const TIDE_DATA = {
     { d:30, dn:'L', coef:84,  tides:[['3:38', 1.5],['9:50',-1.5],['16:08', 1.4],['22:02',-1.4]] },
     { d:31, dn:'M', coef:91,  tides:[['4:22', 1.7],['10:31',-1.7],['16:46', 1.5],['22:42',-1.6]] },
   ],
-
+ 
   // ── ABRIL 2026 ──────────────────────────────────────────────
   '2026-04': [
     { d:1,  dn:'X', coef:93,  tides:[['5:00', 1.8],['11:06',-1.8],['17:20', 1.6],['23:18',-1.7]] },
@@ -283,18 +283,53 @@ const TIDE_DATA = {
     { d:28, dn:'M', coef:77,  tides:[['3:11', 1.4],['9:22',-1.4],['15:40', 1.3],['21:36',-1.3]] },
     { d:29, dn:'X', coef:81,  tides:[['3:55', 1.5],['10:01',-1.5],['16:18', 1.4],['22:16',-1.5]] },
     { d:30, dn:'J', coef:83,  tides:[['4:33', 1.6],['10:36',-1.6],['16:52', 1.5],['22:52',-1.6]] },
+  ],
+ 
+  // ── MAYO 2026 ───────────────────────────────────────────────
+  '2026-05': [
+    { d:1,  dn:'V', coef:82,  tides:[['5:08', 1.6],['11:08',-1.6],['17:24', 1.6],['23:26',-1.6]] },
+    { d:2,  dn:'S', coef:78,  tides:[['5:40', 1.5],['11:40',-1.6],['17:54', 1.6],['23:59',-1.6]] },
+    { d:3,  dn:'D', coef:73,  tides:[['6:11', 1.5],['12:11',-1.5],['18:24', 1.5]] },
+    { d:4,  dn:'L', coef:67,  tides:[['0:32',-1.5],['6:42', 1.3],['12:42',-1.4],['18:56', 1.5]] },
+    { d:5,  dn:'M', coef:59,  tides:[['1:07',-1.4],['7:15', 1.2],['13:16',-1.3],['19:29', 1.3]] },
+    { d:6,  dn:'X', coef:50,  tides:[['1:43',-1.2],['7:50', 1.0],['13:52',-1.1],['20:06', 1.2]] },
+    { d:7,  dn:'J', coef:43,  tides:[['2:25',-1.1],['8:31', 0.9],['14:34',-0.9],['20:50', 1.0]] },
+    { d:8,  dn:'V', coef:37,  tides:[['3:13',-0.9],['9:22', 0.7],['15:25',-0.8],['21:44', 0.9]] },
+    { d:9,  dn:'S', coef:37,  tides:[['4:13',-0.8],['10:26', 0.6],['16:29',-0.7],['22:51', 0.8]] },
+    { d:10, dn:'D', coef:43,  tides:[['5:23',-0.8],['11:43', 0.6],['17:42',-0.7]] },
+    { d:11, dn:'L', coef:53,  tides:[['0:06', 0.8],['6:33',-0.9],['12:55', 0.7],['18:52',-0.8]] },
+    { d:12, dn:'M', coef:66,  tides:[['1:14', 1.0],['7:34',-1.1],['13:53', 0.9],['19:51',-1.0]] },
+    { d:13, dn:'X', coef:78,  tides:[['2:11', 1.2],['8:25',-1.3],['14:43', 1.2],['20:43',-1.3]] },
+    { d:14, dn:'J', coef:88,  tides:[['3:00', 1.4],['9:11',-1.5],['15:28', 1.4],['21:30',-1.5]] },
+    { d:15, dn:'V', coef:95,  tides:[['3:47', 1.6],['9:56',-1.7],['16:12', 1.7],['22:17',-1.8]] },
+    { d:16, dn:'S', coef:98,  tides:[['4:33', 1.8],['10:40',-1.9],['16:56', 1.9],['23:03',-2.0]] },
+    { d:17, dn:'D', coef:96,  tides:[['5:19', 1.9],['11:25',-1.9],['17:41', 2.0],['23:51',-2.0]] },
+    { d:18, dn:'L', coef:90,  tides:[['6:07', 1.9],['12:11',-1.9],['18:28', 2.0]] },
+    { d:19, dn:'M', coef:81,  tides:[['0:40',-2.0],['6:56', 1.8],['12:59',-1.8],['19:17', 1.9]] },
+    { d:20, dn:'X', coef:70,  tides:[['1:32',-1.9],['7:49', 1.6],['13:49',-1.6],['20:10', 1.8]] },
+    { d:21, dn:'J', coef:61,  tides:[['2:28',-1.7],['8:46', 1.3],['14:44',-1.4],['21:08', 1.5]] },
+    { d:22, dn:'V', coef:54,  tides:[['3:29',-1.4],['9:49', 1.1],['15:45',-1.2],['22:13', 1.3]] },
+    { d:23, dn:'S', coef:52,  tides:[['4:36',-1.3],['11:00', 0.9],['16:54',-1.0],['23:24', 1.2]] },
+    { d:24, dn:'D', coef:54,  tides:[['5:47',-1.2],['12:14', 0.9],['18:07',-0.9]] },
+    { d:25, dn:'L', coef:57,  tides:[['0:36', 1.1],['6:56',-1.1],['13:22', 0.9],['19:16',-1.0]] },
+    { d:26, dn:'M', coef:61,  tides:[['1:41', 1.2],['7:55',-1.2],['14:19', 1.0],['20:15',-1.1]] },
+    { d:27, dn:'X', coef:65,  tides:[['2:37', 1.2],['8:45',-1.2],['15:06', 1.2],['21:04',-1.2]] },
+    { d:28, dn:'J', coef:68,  tides:[['3:24', 1.3],['9:27',-1.3],['15:47', 1.3],['21:48',-1.3]] },
+    { d:29, dn:'V', coef:70,  tides:[['4:05', 1.3],['10:05',-1.3],['16:24', 1.4],['22:27',-1.4]] },
+    { d:30, dn:'S', coef:71,  tides:[['4:42', 1.3],['10:41',-1.4],['16:59', 1.4],['23:04',-1.4]] },
+    { d:31, dn:'D', coef:70,  tides:[['5:18', 1.3],['11:15',-1.4],['17:33', 1.5],['23:40',-1.4]] },
   ]
 };
-
+ 
 // ── Helpers ──────────────────────────────────────────────────
 const MONTH_NAMES = ['enero','febrero','marzo','abril','mayo','junio',
                      'julio','agosto','septiembre','octubre','noviembre','diciembre'];
 const DAY_FULL = {D:'dom',L:'lun',M:'mar',X:'mié',J:'jue',V:'vie',S:'sáb'};
-
+ 
 const now = new Date();
 let viewYear  = now.getFullYear();
 let viewMonth = now.getMonth() + 1;
-
+ 
 function coefColor(c) {
   if (c >= 80) return 'var(--c-muy-alto)';
   if (c >= 60) return 'var(--c-alto)';
@@ -310,47 +345,47 @@ function coefLabel(c) {
   return 'Muy bajo';
 }
 function pad(n){ return String(n).padStart(2,'0'); }
-
+ 
 // ── Render table ─────────────────────────────────────────────
 function renderMonth(year, month) {
   const key  = `${year}-${pad(month)}`;
   const rows = TIDE_DATA[key];
   const mn   = MONTH_NAMES[month-1];
-
+ 
   // Month label
   document.getElementById('month-label').textContent =
     mn.charAt(0).toUpperCase() + mn.slice(1) + ' ' + year;
-
+ 
   // Nav buttons
   const availableKeys = Object.keys(TIDE_DATA).sort();
   const cur = `${year}-${pad(month)}`;
   document.getElementById('prev-btn').disabled = cur <= availableKeys[0];
   document.getElementById('next-btn').disabled = cur >= availableKeys[availableKeys.length-1];
-
+ 
   // No data
   if (!rows) {
     document.getElementById('tide-table').style.display = 'none';
     document.getElementById('no-data-box').classList.add('visible');
     return;
   }
-
+ 
   document.getElementById('tide-table').style.display = 'table';
   document.getElementById('no-data-box').classList.remove('visible');
-
+ 
   const tbody  = document.getElementById('tbody');
   tbody.innerHTML = '';
   const todayD = (year === now.getFullYear() && month === now.getMonth()+1) ? now.getDate() : -1;
-
+ 
   rows.forEach(row => {
     const tr = document.createElement('tr');
     if (row.d === todayD) tr.classList.add('is-today');
-
+ 
     // Day cell
     const dayName = DAY_FULL[row.dn] || row.dn;
     const tdD = document.createElement('td');
     tdD.innerHTML = `<span class="day-num">${row.d}</span><span class="day-name">${dayName}</span>`;
     tr.appendChild(tdD);
-
+ 
     // Tides cell
     const tdT = document.createElement('td');
     tdT.className = 'tides-list';
@@ -361,7 +396,7 @@ function renderMonth(year, month) {
       return `<span class="${cls}">${icon} ${h} &nbsp;${sign}${Number(a).toFixed(1)} m</span>`;
     }).join('<br>');
     tr.appendChild(tdT);
-
+ 
     // Coefficient cell
     const c   = row.coef;
     const col = coefColor(c);
@@ -371,54 +406,54 @@ function renderMonth(year, month) {
     tdC.innerHTML = `<div class="coef-badge" style="background:${col}">${c}</div>
                      <span class="coef-lbl" style="color:${col}">${lbl}</span>`;
     tr.appendChild(tdC);
-
+ 
     // Bar cell
     const tdB = document.createElement('td');
     const pct = Math.min(100, Math.round(c / 1.2));
     tdB.innerHTML = `<div class="bar-bg"><div class="bar-fill" style="width:${pct}%;background:${col}"></div></div>`;
     tr.appendChild(tdB);
-
+ 
     tbody.appendChild(tr);
   });
-
+ 
   // Update status card if showing current month
   if (year === now.getFullYear() && month === now.getMonth()+1) {
     updateStatus(rows);
   }
 }
-
+ 
 // ── Status card ──────────────────────────────────────────────
 function updateStatus(rows) {
   const d  = now;
   const ds = d.toLocaleDateString('es-ES',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
   document.getElementById('current-date').textContent = ds.charAt(0).toUpperCase() + ds.slice(1);
-
+ 
   const today = rows.find(r => r.d === d.getDate());
   if (!today) return;
-
+ 
   const c = today.coef;
   document.getElementById('coef-now').textContent  = c;
   document.getElementById('coef-now').style.color  = coefColor(c);
   document.getElementById('coef-level').textContent = coefLabel(c);
   document.getElementById('coef-level').style.color = coefColor(c);
-
+ 
   // Determine tide direction
   const nowMin = d.getHours()*60 + d.getMinutes();
   const tm = today.tides.map(([h, a]) => {
     const [hh, mm] = h.split(':').map(Number);
     return { min: hh*60+mm, alt: a };
   });
-
+ 
   let prev=null, next=null;
   for (const t of tm) {
     if (t.min <= nowMin) prev = t;
     else if (!next) next = t;
   }
-
+ 
   const rising = next && prev ? next.alt > prev.alt : (prev ? prev.alt < 0 : true);
   document.getElementById('tide-status').textContent = rising ? '⬆️ Marea subiendo' : '⬇️ Marea bajando';
   document.getElementById('tide-ring').textContent   = rising ? '🌊' : '🌊';
-
+ 
   if (next) {
     const rem  = next.min - nowMin;
     const hh   = Math.floor(rem/60), mm = rem%60;
@@ -431,7 +466,7 @@ function updateStatus(rows) {
     document.getElementById('next-info').textContent = '';
   }
 }
-
+ 
 // ── Navigation ───────────────────────────────────────────────
 function changeMonth(delta) {
   viewMonth += delta;
@@ -440,7 +475,7 @@ function changeMonth(delta) {
   renderMonth(viewYear, viewMonth);
   window.scrollTo({top:0, behavior:'smooth'});
 }
-
+ 
 // ── Init ─────────────────────────────────────────────────────
 // Default to March 2026 if current month has no data
 if (!TIDE_DATA[`${viewYear}-${pad(viewMonth)}`]) {
